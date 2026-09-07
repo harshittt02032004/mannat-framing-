@@ -316,6 +316,12 @@ body {
   animation: mf-preload-line 0.9s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
+@keyframes mf-wa-pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  70% { transform: scale(1.7); opacity: 0; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+
 @keyframes mf-word-in {
   from { opacity: 0; transform: translateY(20px) rotate(2deg); }
   to { opacity: 1; transform: translateY(0) rotate(0deg); }
