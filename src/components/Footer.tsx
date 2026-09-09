@@ -55,7 +55,7 @@ export default function Footer() {
           <FooterCol title="COMPANY">
             <Link href="/about" className={linkCls}>About Us</Link>
             <Link href="/projects" className={linkCls}>Projects</Link>
-            <span className="text-concrete/60">Careers</span>
+            <Link href="/contact#careers" className={linkCls}>Careers</Link>
             <span className="text-concrete/60">Blog</span>
             <Link href="/contact" className={linkCls}>Contact</Link>
           </FooterCol>

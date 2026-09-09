@@ -3,90 +3,58 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { EASE } from "@/lib/motion";
+import { COMPANY, SERVICE_CITIES, directionsUrl, mapEmbedUrl } from "@/lib/company";
 
-// Surrey, BC (city centre) — replace with the exact yard/office address once confirmed.
-const COMPANY = {
-  name: "Mannat Framing Ltd.",
-  tagline: "Framing & Construction",
-  address: "Surrey, British Columbia",
-  lat: 49.1913,
-  lng: -122.849,
-  phone: "(778) 723-8994",
-  phoneRaw: "+17787238994",
-  email: "m.framing9@gmail.com",
-};
+const PinIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>
+);
+const CompassIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="m15.5 8.5-2 5-5 2 2-5z" /></svg>
+);
 
-const cities = ["Langley", "Burnaby", "Vancouver", "Coquitlam", "Delta", "Richmond", "Abbotsford", "Maple Ridge"];
-
-/* Scale Pop reveal: 0.85 → 1, staggered 100ms per card.
-   Delay lives on whileInView only, so hover/tap respond instantly. */
-function PopCard({ number, delay, children }: { number: string; delay: number; children: React.ReactNode }) {
+function LocationCol({ icon, label, children, delay }: { icon: React.ReactNode; label: string; children: React.ReactNode; delay: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.85 }}
-      whileInView={{ opacity: 1, scale: 1, transition: { duration: 0.5, ease: EASE, delay } }}
-      viewport={{ once: true, amount: 0.1 }}
-      whileHover={{ scale: 1.02, x: 4 }}
-      whileTap={{ scale: 1.02 }}
-      transition={{ duration: 0.35, ease: EASE }}
-      className="group relative border border-ink/[0.08] border-t-2 border-t-gold/70 bg-surface-2/90 px-[22px] py-[18px] shadow-[0_2px_8px_rgba(13,13,13,0.04)] backdrop-blur-[16px] transition-[background-color,border-color,box-shadow] duration-500 ease-spring hover:border-gold/40 hover:border-t-gold hover:bg-surface-2/[0.98] hover:shadow-card"
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE, delay } }}
+      viewport={{ once: true, amount: 0.2 }}
+      className="group"
     >
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute right-3.5 top-2.5 select-none font-heading text-[32px] font-extrabold leading-none text-accent/[0.06] transition-colors duration-[400ms] ease-spring group-hover:text-accent/[0.16]"
-      >
-        {number}
-      </span>
+      <div className="mb-3 flex items-center gap-3">
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gold/[0.14] text-accent transition-all duration-[400ms] ease-spring group-hover:bg-gold group-hover:text-black group-hover:shadow-[0_4px_14px_rgba(197,164,109,0.45)]">
+          {icon}
+        </span>
+        <span className="font-heading text-[13px] font-bold uppercase tracking-[1.6px] text-accent">{label}</span>
+      </div>
       {children}
     </motion.div>
   );
 }
 
-/* Circle icon that floods gold (icon turns black) when the card is hovered/tapped */
-function IconCircle({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold/[0.12] text-accent transition-all duration-[400ms] ease-spring group-hover:bg-gold group-hover:text-black group-hover:shadow-[0_4px_14px_rgba(197,164,109,0.45)] group-active:bg-gold group-active:text-black">
-      {children}
-    </div>
-  );
-}
-
-const PinIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>
-);
-const CompassIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="m15.5 8.5-2 5-5 2 2-5z" /></svg>
-);
-const PhoneIcon = ({ size = 18 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.8.7a2 2 0 0 1 1.8 2Z" /></svg>
-);
-const MailIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>
-);
-
+/**
+ * "Our Locations": the live Google map is the section background (pin in the left half),
+ * with the location copy floating on a glass panel to the right, mirroring NuFrame's map-left / text-right layout.
+ */
 export default function ContactMap() {
-  const mapSrc = `https://maps.google.com/maps?q=${COMPANY.lat},${COMPANY.lng}+(${encodeURIComponent(COMPANY.name)})&hl=en&z=13&output=embed`;
-  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${COMPANY.lat},${COMPANY.lng}`;
-
   return (
-    <section className="relative overflow-hidden bg-surface">
-      {/* the map IS the section — everything else floats above it */}
+    <section id="locations" className="relative overflow-hidden bg-surface">
+      {/* On large screens the iframe is 140% wide and anchored right, so the map pin lands at ~30% of the section (left half). */}
       <iframe
         title={`${COMPANY.name} location map`}
-        src={mapSrc}
-        className="mf-map absolute inset-0 h-full w-full border-0"
+        src={mapEmbedUrl}
+        className="mf-map absolute inset-y-0 right-0 h-full w-full border-0 lg:w-[140%]"
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
       />
-      {/* readability wash — heavier on the left where the cards live */}
+      {/* readability wash, heavier on the right where the copy lives */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-surface via-surface/85 to-surface/40 lg:via-surface/45 lg:to-transparent"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-l from-surface via-surface/85 to-surface/40 lg:via-surface/45 lg:to-transparent"
       />
-      {/* name chip floating above the map pin (the embed renders its pin at the centre) */}
+      {/* name chip floating above the map pin (the embed renders its pin at its own centre) */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 z-[1] hidden -translate-x-1/2 -translate-y-[calc(100%+34px)] flex-col items-center md:flex"
+        className="pointer-events-none absolute left-1/2 top-1/2 z-[1] hidden -translate-x-1/2 -translate-y-[calc(100%+34px)] flex-col items-center lg:left-[30%] lg:flex"
       >
         <div className="border border-ink/10 border-t-2 border-t-gold bg-surface-2/95 px-4 py-2.5 text-center shadow-lift backdrop-blur-sm">
           <p className="m-0 font-heading text-sm font-extrabold leading-tight text-ink">{COMPANY.name}</p>
@@ -96,81 +64,50 @@ export default function ContactMap() {
       </div>
 
       <div className="relative mx-auto max-w-[1440px] px-5 py-20 md:px-10 md:py-28">
-        <div className="flex w-full max-w-[400px] flex-col gap-3.5 max-md:max-w-none">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
-            whileInView={{ opacity: 1, scale: 1, transition: { duration: 0.5, ease: EASE } }}
-            viewport={{ once: true, amount: 0.1 }}
-            className="mb-1.5"
-          >
-            <span className="inline-block bg-gold/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-[3px] text-ink">Visit Us</span>
-            <h1 className="m-0 mt-4 font-heading text-[clamp(32px,4.2vw,46px)] font-extrabold leading-[1.08] text-ink">
-              Finding us is the easy part.
-            </h1>
-            <p className="m-0 mt-3 text-base leading-[1.7] text-ink-2">
-              We&rsquo;re headquartered in Surrey, BC and our crews work across the whole Lower Mainland. Here&rsquo;s everything you need to reach us.
-            </p>
-          </motion.div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92, y: 20 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0, transition: { duration: 0.6, ease: EASE } }}
+          viewport={{ once: true, amount: 0.1 }}
+          className="ml-auto w-full max-w-[600px] border border-ink/[0.08] border-t-2 border-t-gold bg-surface-2/90 p-7 shadow-[0_2px_8px_rgba(13,13,13,0.04)] backdrop-blur-[16px] transition-[box-shadow,border-color] duration-500 ease-spring hover:border-gold/40 hover:shadow-card md:p-10"
+        >
+          <span className="inline-flex items-center gap-3 font-mono text-xs font-medium tracking-[2.5px] text-accent">
+            <span className="h-px w-6 bg-gold" /> OUR LOCATIONS
+          </span>
+          <h2 className="m-0 mt-4 font-heading text-[clamp(30px,3.8vw,44px)] font-extrabold uppercase leading-[1.05] text-ink">Our Locations</h2>
+          <p className="m-0 mt-4 text-[15px] leading-[1.75] text-ink-2">
+            From our head office in Surrey to job sites across the Lower Mainland, our team is here to discuss framing and construction solutions for large and small builds. Give us a call, we look forward to hearing from you.
+          </p>
 
-          <PopCard number="01" delay={0}>
-            <div className="flex gap-4">
-              <IconCircle><PinIcon /></IconCircle>
-              <div>
-                <p className="m-0 mb-1 font-heading text-sm font-bold text-ink">{COMPANY.name}</p>
-                <p className="m-0 text-xs leading-[1.6] text-ink-2">{COMPANY.address}</p>
-                <a
-                  href={directionsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-accent transition-[gap,color] duration-300 ease-spring hover:text-ink group-hover:gap-2"
-                >
-                  Get Directions <span aria-hidden="true">&rarr;</span>
-                </a>
-              </div>
-            </div>
-          </PopCard>
-
-          <PopCard number="02" delay={0.1}>
-            <div className="flex gap-4">
-              <IconCircle><CompassIcon /></IconCircle>
-              <div>
-                <p className="m-0 mb-1 font-heading text-sm font-bold text-ink">We come to your site</p>
-                <p className="m-0 text-xs leading-[1.6] text-ink-2">
-                  Surrey, {cities.join(", ")} and across Greater Vancouver.
-                </p>
-                <Link
-                  href="/about#where-we-work"
-                  className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-accent transition-[gap,color] duration-300 ease-spring hover:text-ink group-hover:gap-2"
-                >
-                  Full service area <span aria-hidden="true">&rarr;</span>
-                </Link>
-              </div>
-            </div>
-          </PopCard>
-
-          <PopCard number="03" delay={0.2}>
-            <div className="flex gap-4">
-              <IconCircle><PhoneIcon /></IconCircle>
-              <div>
-                <p className="m-0 mb-1 font-heading text-sm font-bold text-ink">Rather talk to someone first?</p>
-                <a href={`tel:${COMPANY.phoneRaw}`} className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent transition-colors duration-300 hover:text-ink">
-                  <PhoneIcon size={12} /> {COMPANY.phone}
-                </a>
+          <div className="mt-8 grid grid-cols-1 gap-8 border-t border-dashed border-gold/30 pt-8 sm:grid-cols-2">
+            <LocationCol icon={<PinIcon />} label="Surrey (Head Office)" delay={0.1}>
+              <p className="m-0 text-sm leading-[1.7] text-ink">
+                {COMPANY.name}
                 <br />
-                <a href={`mailto:${COMPANY.email}`} className="mt-1.5 inline-flex items-center gap-1.5 text-xs leading-[1.6] text-ink-2 transition-colors duration-300 hover:text-accent">
-                  <MailIcon /> {COMPANY.email}
-                </a>
-                <br />
-                <a
-                  href="#form"
-                  className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-accent transition-[gap,color] duration-300 ease-spring hover:text-ink group-hover:gap-2"
-                >
-                  Request a free quote <span aria-hidden="true">&rarr;</span>
-                </a>
-              </div>
-            </div>
-          </PopCard>
-        </div>
+                <span className="text-ink-2">{COMPANY.address}</span>
+              </p>
+              <a
+                href={directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-accent transition-[gap,color] duration-300 ease-spring hover:gap-2 hover:text-ink"
+              >
+                Get Directions <span aria-hidden="true">&rarr;</span>
+              </a>
+            </LocationCol>
+
+            <LocationCol icon={<CompassIcon />} label="Where We Work" delay={0.2}>
+              <p className="m-0 text-sm leading-[1.7] text-ink-2">
+                Surrey, {SERVICE_CITIES.join(", ")} and across Greater Vancouver.
+              </p>
+              <Link
+                href="/about#where-we-work"
+                className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-accent transition-[gap,color] duration-300 ease-spring hover:gap-2 hover:text-ink"
+              >
+                Full service area <span aria-hidden="true">&rarr;</span>
+              </Link>
+            </LocationCol>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
