@@ -235,6 +235,40 @@ body {
   }
 }
 
+/* ------------------------------------------------------------------
+   Press feedback (see components/TouchFeedback.tsx). `.mf-press` carries the
+   transition for the press AND the release; `.mf-press-down` is the state.
+   Block-level controls dip in scale; inline text links shift to gold instead
+   (transforms do not apply to inline boxes).
+   ------------------------------------------------------------------ */
+@layer base {
+  a, button, select, summary, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+.mf-press {
+  transition:
+    transform 0.32s cubic-bezier(0.23, 1, 0.32, 1),
+    color 0.32s cubic-bezier(0.23, 1, 0.32, 1),
+    filter 0.32s cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 0.32s cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 0.32s cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 0.32s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.32s cubic-bezier(0.23, 1, 0.32, 1) !important;
+}
+.mf-press-down:not(.mf-press-inline) {
+  transform: scale(0.96);
+  filter: brightness(1.06);
+}
+.mf-press-down.mf-press-inline {
+  color: var(--color-accent);
+  opacity: 0.82;
+}
+/* Pressed gold controls keep black text; the scale dip is enough */
+.mf-press-down.mf-press-inline.text-black {
+  color: #0d0d0d;
+}
+
 /* Map embed: keep it light in light mode, invert it into a dark basemap in dark mode. */
 .mf-map {
   filter: grayscale(0.35) sepia(0.12);

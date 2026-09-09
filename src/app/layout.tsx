@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MotionProvider from "@/components/MotionProvider";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import TouchFeedback from "@/components/TouchFeedback";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="flex-1">{children}</main>
           <Footer />
           <WhatsAppButton />
+          <TouchFeedback />
         </MotionProvider>
       </body>
     </html>
