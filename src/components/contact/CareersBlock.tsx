@@ -10,10 +10,10 @@ export default function CareersBlock() {
     <section id="careers" className="bg-surface py-20 md:py-28">
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 items-center gap-12 pr-5 md:pr-10 lg:grid-cols-[1fr_1fr] lg:gap-20">
         <Reveal scale={0.97} className="relative">
-          <div className="relative aspect-[4/3] w-full overflow-hidden">
+          <div className="relative aspect-[16/9] w-full overflow-hidden lg:aspect-[2/1]">
             <Image
-              src="/assets/gallery/g22.jpg"
-              alt="Framing crew work area with stud walls and sheathing on a Mannat Framing site"
+              src="/assets/photos/careers-crew.jpg"
+              alt="Framing crew in hard hats and safety vests raising a stud wall on a commercial job site"
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-cover transition-transform duration-[1200ms] ease-spring hover:scale-[1.03]"
