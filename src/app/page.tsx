@@ -36,7 +36,8 @@ export default function Home() {
         <HeroParallax>
           <Image src="/assets/hero-framing.jpg" alt="Timber framing under construction in Surrey, BC" fill priority sizes="100vw" className="object-cover" />
         </HeroParallax>
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(95deg,#0D0D0D_28%,rgba(13,13,13,0.55)_55%,rgba(13,13,13,0.1)_100%)]" />
+        {/* Phones: the copy spans the full width, so the wash is a uniform vertical darkening instead of a left-to-right fade. */}
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(13,13,13,0.82)_0%,rgba(13,13,13,0.7)_55%,rgba(13,13,13,0.9)_100%)] md:bg-[linear-gradient(95deg,#0D0D0D_28%,rgba(13,13,13,0.55)_55%,rgba(13,13,13,0.1)_100%)]" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/70 to-transparent" />
         <span className="absolute left-5 top-9 text-xs tracking-[1px] text-gold md:left-10">01</span>
         <span className="absolute bottom-[110px] left-5 top-10 w-px bg-gold/35 md:left-10" />

@@ -15,7 +15,8 @@ export default function AboutHero() {
       <span className="absolute right-5 top-9 z-[3] hidden font-mono text-[11px] tracking-[1px] text-ink-2 sm:block md:right-10">49.1913&deg; N, 122.8490&deg; W</span>
 
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 md:min-h-[88vh] md:grid-cols-[1.1fr_0.9fr]">
-        <div className="relative z-[2] flex flex-col justify-center px-5 pb-[70px] pt-[120px] md:pl-10 md:pr-0 md:pb-[90px] md:pt-[150px]">
+        {/* Below lg the bottom padding reserves a 300px band for the compact IsoFrame (COMPACT_BAND in IsoFrame.tsx). */}
+        <div className="relative z-[2] flex flex-col justify-center px-5 pb-[300px] pt-[120px] md:pl-10 md:pr-0 md:pt-[150px] lg:pb-[90px]">
           {/* Decorative click-to-build isometric frame; canvas sits behind the text (see IsoFrame.tsx) */}
           <IsoFrame />
           <motion.span

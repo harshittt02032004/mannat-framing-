@@ -47,7 +47,7 @@ export default function ProjectsGallery() {
     <LayoutGroup>
       {/* FILTER BAR */}
       <div className="z-10 border-b border-ink/[0.08] bg-surface/95 backdrop-blur-md md:sticky md:top-[68px]">
-        <div className="mx-auto flex max-w-[1440px] flex-wrap gap-x-9 px-5 md:px-10">
+        <div className="mx-auto flex max-w-[1440px] gap-x-7 overflow-x-auto px-5 [scrollbar-width:none] md:flex-wrap md:gap-x-9 md:overflow-visible md:px-10 [&::-webkit-scrollbar]:hidden">
           {filters.map((f) => {
             const isActive = f === active;
             return (
@@ -56,7 +56,7 @@ export default function ProjectsGallery() {
                 type="button"
                 onClick={() => setActive(f)}
                 aria-pressed={isActive}
-                className={`relative cursor-pointer border-0 bg-transparent py-5 font-heading text-[13px] font-semibold tracking-[0.4px] transition-[color,transform] duration-300 ease-spring hover:-translate-y-0.5 hover:text-ink active:-translate-y-0.5 ${
+                className={`relative shrink-0 cursor-pointer whitespace-nowrap border-0 bg-transparent py-5 font-heading text-[13px] font-semibold tracking-[0.4px] transition-[color,transform] duration-300 ease-spring hover:-translate-y-0.5 hover:text-ink active:-translate-y-0.5 ${
                   isActive ? "text-ink" : "text-[#8a8a82]"
                 }`}
               >

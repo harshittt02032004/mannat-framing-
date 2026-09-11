@@ -16,7 +16,7 @@ export type CraneMotifProps = {
   opacity?: { structure: number; moving: number };
   /** Run the lift cycle after the draw-in. */
   loop?: boolean;
-  /** Viewport width below which the motif is hidden. */
+  /** Viewport width below which the motif switches to compact mode (flows below the copy instead of floating beside it). */
   minWidth?: number;
   /** Minimum gap between the crane's left edge and the heading's right edge. */
   clearance?: number;
@@ -124,12 +124,28 @@ export default function CraneMotif({
       const hr = hero.getBoundingClientRect();
       const vw = window.innerWidth;
       st.rgb = hexToRgb((getComputedStyle(document.documentElement).getPropertyValue("--color-gold") || "").trim() || "#c9a961");
-      if (vw < minWidth) { st.visible = false; canvas.style.display = "none"; stopLoop(); return; }
+      const h1 = hero.querySelector("h1");
+      if (vw < minWidth) {
+        // Compact mode (phones / tablets): the canvas flows below the hero copy instead of floating beside it.
+        const padL = parseFloat(getComputedStyle(hero).paddingLeft) || 0;
+        const padR = parseFloat(getComputedStyle(hero).paddingRight) || 0;
+        const w = Math.min(size.w * 0.85, hr.width - padL - padR - 24);
+        if (w < 140) { st.visible = false; canvas.style.display = "none"; stopLoop(); return; }
+        const h = (w * size.h) / size.w;
+        st.w = w; st.h = h; st.scale = w / DW;
+        st.dpr = Math.min(2, window.devicePixelRatio || 1);
+        Object.assign(canvas.style, { display: "block", position: "relative", right: "", top: "", marginTop: "36px", marginLeft: "auto", marginRight: "24px" });
+        canvas.style.width = `${Math.round(w)}px`; canvas.style.height = `${Math.round(h)}px`;
+        canvas.width = Math.round(w * st.dpr); canvas.height = Math.round(h * st.dpr);
+        st.visible = true;
+        if (reduced) render(); else startLoop();
+        return;
+      }
+      Object.assign(canvas.style, { position: "", marginTop: "", marginLeft: "", marginRight: "" });
       // size: full at ≥1280, ~76% at 1024, linear between
       const t = clamp((vw - 1024) / (1280 - 1024), 0, 1);
       let w = size.w * (0.7647 + 0.2353 * t);
       // never within `clearance` of the heading's right edge
-      const h1 = hero.querySelector("h1");
       let headingRight = 0;
       if (h1) { const range = document.createRange(); range.selectNodeContents(h1); headingRight = range.getBoundingClientRect().right - hr.left; }
       const rightPx = right.endsWith("%") ? (parseFloat(right) / 100) * hr.width : parseFloat(right);

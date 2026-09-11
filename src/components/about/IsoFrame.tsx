@@ -24,6 +24,8 @@ const CENTER = { x: 0.78, y: 0.38 };
 const AUTO_ROTATE = 0.1; // rad/s
 const BUILD_MS = 3000;
 const RESET_MS = 1200;
+/** Height of the band reserved under the hero copy on phones / tablets (matches AboutHero's compact bottom padding). */
+const COMPACT_BAND = 300;
 
 type V3 = [number, number, number];
 type Stage = 1 | 2 | 3 | 4;
@@ -82,6 +84,7 @@ const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2,
 export default function IsoFrame() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hintRef = useRef<HTMLSpanElement>(null);
+  const stageRef = useRef<HTMLSpanElement>(null);
   const [hint, setHint] = useState("CLICK TO FRAME");
   const [stage, setStage] = useState<string>(STAGE_LABEL[1]);
   const [busy, setBusy] = useState(false);
@@ -95,6 +98,9 @@ export default function IsoFrame() {
     if (!ctx) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const touch = window.matchMedia("(hover: none)").matches;
+    const VERB = touch ? "TAP" : "CLICK";
+    let compact = false;
     const model = buildModel();
     const stageLen: Record<2 | 3 | 4, number> = { 2: 0, 3: 0, 4: 0 };
     for (const s of model) if (s.stage !== 1) stageLen[s.stage] += s.len;
@@ -122,20 +128,36 @@ export default function IsoFrame() {
       st.dpr = Math.min(2, window.devicePixelRatio || 1);
       canvas.width = Math.round(st.W * st.dpr); canvas.height = Math.round(st.H * st.dpr);
       canvas.style.width = `${st.W}px`; canvas.style.height = `${st.H}px`;
-      st.cx = st.W * CENTER.x; st.cy = st.H * CENTER.y;
-      // keep the frame right of the paragraph: shrink before overlapping, hide below 1024px
-      const para = panel.querySelector("p");
-      const paraRight = para ? para.getBoundingClientRect().right - r.left : 0;
       const halfW = 0.5 * (2 * HW + 2 * HD) * Math.SQRT1_2; // widest projected half-width per unit of scale
-      const maxScale = (st.cx - paraRight - 16) / halfW;
-      st.scale = Math.min(BASE_SCALE, maxScale);
-      st.visible = window.innerWidth >= 1024 && st.scale >= BASE_SCALE * 0.45;
+      compact = window.innerWidth < 1024;
+      if (compact) {
+        // Phones / tablets: the frame sits centred in the reserved band below the hero copy (see AboutHero's bottom padding).
+        st.cx = st.W * 0.5;
+        st.cy = st.H - COMPACT_BAND * 0.62;
+        st.scale = Math.min(BASE_SCALE * 0.8, (st.W - 48) / (2 * halfW), (COMPACT_BAND - 70) / (RIDGE + (2 * HD) * BASE_TILT * 0.5));
+        st.visible = st.scale >= BASE_SCALE * 0.3;
+      } else {
+        st.cx = st.W * CENTER.x; st.cy = st.H * CENTER.y;
+        // keep the frame right of the paragraph: shrink before overlapping, hide when it can't fit
+        const para = panel.querySelector("p");
+        const paraRight = para ? para.getBoundingClientRect().right - r.left : 0;
+        const maxScale = (st.cx - paraRight - 16) / halfW;
+        st.scale = Math.min(BASE_SCALE, maxScale);
+        st.visible = st.scale >= BASE_SCALE * 0.45;
+      }
       const wasHidden = lastHidden;
       lastHidden = !st.visible;
       if (wasHidden !== lastHidden) setHidden(!st.visible);
       if (hintRef.current) {
         hintRef.current.style.left = `${st.cx}px`;
-        hintRef.current.style.top = `${st.cy + (2 * HD) * st.tilt * st.scale * 0.5 + 26}px`;
+        // clear the lowest projected sill corner (worst case at any rotation) before placing the hint
+        const lowest = (HW + HD) * st.tilt * st.scale;
+        hintRef.current.style.top = `${st.cy + lowest + (compact ? 22 : 12)}px`;
+      }
+      if (stageRef.current) {
+        Object.assign(stageRef.current.style, compact
+          ? { left: "50%", right: "auto", bottom: "22px", transform: "translateX(-50%)" }
+          : { left: "auto", right: "24px", bottom: "96px", transform: "" });
       }
       panel.style.cursor = st.visible ? (st.phase === "idle" ? "pointer" : "default") : "";
     };
@@ -221,7 +243,7 @@ export default function IsoFrame() {
 
       // UI text
       const busyNow = st.phase !== "idle";
-      const hintText = busyNow ? "" : st.clicks === 0 ? "CLICK TO FRAME" : st.clicks === 1 ? "CLICK TO FINISH" : "CLICK TO RESET";
+      const hintText = busyNow ? "" : st.clicks === 0 ? `${VERB} TO FRAME` : st.clicks === 1 ? `${VERB} TO FINISH` : `${VERB} TO RESET`;
       setUi(hintText, STAGE_LABEL[st.phase === "reset" ? 1 : st.currentStage], busyNow);
 
       draw();
@@ -324,7 +346,7 @@ export default function IsoFrame() {
       >
         {hint}
       </span>
-      <span aria-live="polite" className={`${meta} bottom-[96px] right-6 ${hidden ? "hidden" : ""}`}>
+      <span ref={stageRef} aria-live="polite" className={`${meta} whitespace-nowrap ${hidden ? "hidden" : ""}`}>
         {stage}
       </span>
     </>
