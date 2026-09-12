@@ -42,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){try{var s=localStorage.getItem('mf-theme');var d=s?s==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d){document.documentElement.classList.add('dark');}document.documentElement.style.colorScheme=d?'dark':'light';}catch(e){}})();",
+              "(function(){try{var s=localStorage.getItem('mf-theme');var d=s?s==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d){document.documentElement.classList.add('dark');}document.documentElement.style.colorScheme=d?'dark':'light';}catch(e){}try{if(!sessionStorage.getItem('mf-preloaded')){document.documentElement.classList.add('mf-splash');sessionStorage.setItem('mf-preloaded','1');}}catch(e){document.documentElement.classList.add('mf-splash');}})();",
           }}
         />
       </head>
