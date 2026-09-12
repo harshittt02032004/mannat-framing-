@@ -3,7 +3,6 @@ import Image from "next/image";
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import CtaBand from "@/components/CtaBand";
-import Preloader from "@/components/Preloader";
 import ServiceIcon from "@/components/ServiceIcon";
 import ServicesAccordion from "@/components/home/ServicesAccordion";
 import AboutStrip from "@/components/home/AboutStrip";
@@ -29,7 +28,6 @@ const whyPoints = [
 export default function Home() {
   return (
     <div className="pb-16 md:pb-0">
-      <Preloader />
 
       {/* HERO */}
       <section className="relative flex min-h-[92vh] items-center overflow-hidden bg-black">

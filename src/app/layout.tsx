@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import MotionProvider from "@/components/MotionProvider";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import TouchFeedback from "@/components/TouchFeedback";
+import Preloader from "@/components/Preloader";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen flex flex-col">
         <MotionProvider>
+          <Preloader />
           <SmoothScroll />
           <ScrollProgress />
           <Navbar />
