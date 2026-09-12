@@ -53,7 +53,7 @@ export default function Preloader() {
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[70vmin] w-[70vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/10 blur-[90px]" />
 
       {/* artwork: square, sized to the shorter side; the grain fades into the black edges via a radial mask */}
-      <div className="mf-splash-art relative aspect-square w-[min(130vw,80vh,760px)] md:w-[min(92vw,92vh,760px)] [mask-image:radial-gradient(circle_at_50%_50%,#000_46%,transparent_71%)] [-webkit-mask-image:radial-gradient(circle_at_50%_50%,#000_46%,transparent_71%)]">
+      <div className="mf-splash-art relative aspect-square w-[min(130vw,80vh,760px)] shrink-0 md:w-[min(92vw,92vh,760px)] [mask-image:radial-gradient(circle_at_50%_50%,#000_46%,transparent_71%)] [-webkit-mask-image:radial-gradient(circle_at_50%_50%,#000_46%,transparent_71%)]">
         <Image src="/assets/brand/splash-logo.jpg" alt="" fill priority sizes="(max-width: 768px) 92vw, 760px" className="object-cover" />
       </div>
 
