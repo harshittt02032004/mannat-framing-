@@ -90,6 +90,20 @@ export default function Navbar() {
 
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
+  /**
+   * Next's <Link> does nothing when the target is the page you are already on, so a tap on
+   * "Home" while on the homepage (often scrolled down) looked dead. For a same-page tap we
+   * close the menus and do a full reload to the top of that page, as the client expects.
+   */
+  const onNav = (href: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (href !== pathname) return;
+    e.preventDefault();
+    setOpen(false);
+    setServicesOpen(false);
+    setMobileServicesOpen(false);
+    window.location.assign(href);
+  };
+
   const linkCls = (active: boolean) =>
     `relative text-sm whitespace-nowrap transition-[color,transform] duration-300 ease-spring hover:-translate-y-0.5 active:-translate-y-0.5 after:absolute after:bottom-[-6px] after:left-0 after:h-px after:bg-gold after:transition-[width] after:duration-300 after:ease-spring after:content-[''] ${
       active ? "text-accent after:w-full" : "text-ink after:w-0 hover:after:w-full active:after:w-full"
@@ -115,7 +129,7 @@ export default function Navbar() {
               scrolled ? "px-4 md:px-6" : "px-5 md:px-10"
             }`}
           >
-            <Link href="/" className="group flex shrink-0 items-center gap-3">
+            <Link href="/" onClick={onNav("/")} className="group flex shrink-0 items-center gap-3">
               {/* Navy/red mark on light surfaces; cream/red variant when the site is in dark mode */}
               <Image
                 src="/assets/icon-light.png"
@@ -171,7 +185,9 @@ export default function Navbar() {
                         if (window.matchMedia("(hover: none)").matches && !servicesOpen) {
                           e.preventDefault();
                           setServicesOpen(true);
+                          return;
                         }
+                        onNav("/services")(e);
                       }}
                       className={`${linkCls(isActive("/services"))} flex items-center gap-1`}
                     >
@@ -196,6 +212,7 @@ export default function Navbar() {
                                   <Link
                                     key={s.slug}
                                     href={`/services/${s.slug}`}
+                                    onClick={onNav(`/services/${s.slug}`)}
                                     className={`group/item flex items-center gap-3 p-2.5 transition-[background-color,transform] duration-300 ease-spring hover:bg-gold/10 active:bg-gold/10 ${
                                       active ? "bg-gold/10" : ""
                                     }`}
@@ -214,6 +231,7 @@ export default function Navbar() {
                               })}
                               <Link
                                 href="/services"
+                                onClick={onNav("/services")}
                                 className="group/all col-span-2 flex items-center justify-center gap-2 rounded-full bg-gold p-3 font-heading text-sm font-bold text-black transition-[background-color,gap] duration-300 ease-spring hover:gap-3 hover:bg-gold-dark active:bg-gold-dark"
                               >
                                 View All Services
@@ -228,7 +246,7 @@ export default function Navbar() {
                     </AnimatePresence>
                   </div>
                 ) : (
-                  <Link key={l.href} href={l.href} className={linkCls(isActive(l.href))}>
+                  <Link key={l.href} href={l.href} onClick={onNav(l.href)} className={linkCls(isActive(l.href))}>
                     {l.label}
                   </Link>
                 )
@@ -246,6 +264,7 @@ export default function Navbar() {
               <ThemeToggle />
               <Link
                 href="/contact"
+                onClick={onNav("/contact")}
                 className={`hidden whitespace-nowrap border border-gold text-xs tracking-[0.3px] text-ink transition-[background-color,color,transform,border-radius,padding] md:inline-block duration-[450ms] ease-spring hover:scale-[1.03] hover:bg-gold hover:text-black active:scale-[0.98] active:bg-gold active:text-black md:text-[13px] ${
                   scrolled ? "rounded-full px-4 py-2 md:px-5 md:py-[9px]" : "rounded-full px-[14px] py-[9px] md:px-[22px] md:py-[11px]"
                 }`}
@@ -315,13 +334,14 @@ export default function Navbar() {
                                   className="overflow-hidden"
                                 >
                                   <div className="mb-2 ml-4 flex flex-col gap-1 border-l-2 border-gold/40 pl-3">
-                                    <Link href="/services" className="block rounded-lg px-3 py-2 text-sm font-semibold text-accent transition-transform duration-300 ease-spring active:translate-x-1">
+                                    <Link href="/services" onClick={onNav("/services")} className="block rounded-lg px-3 py-2 text-sm font-semibold text-accent transition-transform duration-300 ease-spring active:translate-x-1">
                                       All Services
                                     </Link>
                                     {SERVICES.map((s) => (
                                       <Link
                                         key={s.slug}
                                         href={`/services/${s.slug}`}
+                                        onClick={onNav(`/services/${s.slug}`)}
                                         className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-[background-color,transform] duration-300 ease-spring active:translate-x-1 active:bg-gold/10 ${
                                           pathname === `/services/${s.slug}` ? "text-accent" : "text-ink-2"
                                         }`}
@@ -338,7 +358,7 @@ export default function Navbar() {
                             </AnimatePresence>
                           </>
                         ) : (
-                          <Link href={l.href} className={itemCls}>
+                          <Link href={l.href} onClick={onNav(l.href)} className={itemCls}>
                             {l.label}
                           </Link>
                         )}
@@ -353,6 +373,7 @@ export default function Navbar() {
                   >
                     <Link
                       href="/contact"
+                      onClick={onNav("/contact")}
                       className="flex items-center justify-center gap-2 rounded-full bg-gold px-5 py-3 font-heading text-sm font-bold text-black shadow-[0_12px_30px_-12px_rgba(197,164,109,0.7)] transition-transform duration-300 ease-spring active:scale-[0.98]"
                     >
                       Get a Free Quote <span aria-hidden="true">&rarr;</span>
