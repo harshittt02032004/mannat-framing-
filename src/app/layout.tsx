@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MotionProvider from "@/components/MotionProvider";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import { SITE_URL } from "@/lib/site";
 import TouchFeedback from "@/components/TouchFeedback";
 import Preloader from "@/components/Preloader";
 
@@ -29,6 +30,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Framing Contractor Surrey BC | Mannat Framing Ltd.",
   description:
     "Mannat Framing Ltd. is a licensed framing contractor in Surrey, BC with 10+ years of experience. Residential, multi-family, townhouse & commercial framing across the Lower Mainland. Get a free quote today.",
